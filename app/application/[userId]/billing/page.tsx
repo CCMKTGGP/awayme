@@ -2,99 +2,90 @@
 
 import Sidebar from "@/app/components/sidebar";
 import TopBar from "@/app/components/topbar";
-import Button from "@/app/components/button";
 import React, { useState, useEffect } from "react";
+import { IPlan } from "./interface";
+import { useUserContext } from "@/context/userContext";
+import { fetchData } from "@/utils/fetch";
+import PlanCard from "@/app/components/plan-card";
+import { PlanTypes } from "@/utils/planTypes";
 
 export default function Billing() {
-    const [plans, setPlans] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+  const { user } = useUserContext();
+  const [plans, setPlans] = useState<IPlan[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState({
+    apiError: "",
+  });
 
-    useEffect(() => {
-        const fetchPlans = async () => {
-            setIsLoading(true);
-            try {
-                const response = await fetch('/api/plans', { method: 'GET' });
-                const data = await response.json();
-                if (response.ok) {
-                    setPlans(data.data); // Ensure your API sends data in this structure
-                } else {
-                    console.error('Failed to fetch plans:', data.message);
-                }
-            } catch (error) {
-                console.error('Error fetching plans:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchPlans();
-    }, []);
-
-    const handleUpgradeClick = async (planId) => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(`/api/plans/upgrade/${planId}`, {
-                method: 'POST'
-            });
-            const data = await response.json();
-            if (response.ok) {
-                console.log('Plan upgraded successfully:', data);
-            } else {
-                console.error('Failed to upgrade plan:', data.message);
-            }
-        } catch (error) {
-            console.error('Error upgrading plan:', error);
-        } finally {
-            setIsLoading(false);
-        }
+  useEffect(() => {
+    const fetchPlans = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetchData("/api/plans");
+        const { data } = response;
+        setPlans(data);
+      } catch (err: any) {
+        setError((error) => ({
+          ...error,
+          apiError: err.message,
+        }));
+      } finally {
+        setIsLoading(false);
+      }
     };
+    fetchPlans();
+  }, []);
 
+  function renderPlanCards() {
+    if (isLoading) {
+      return (
+        <p className="text-base leading-[24px] text-heading mt-4">
+          Fetching plans!
+        </p>
+      );
+    }
+    if (plans.length <= 0) {
+      return (
+        <p className="text-base leading-[24px] text-heading mt-4">
+          No Plans Found
+        </p>
+      );
+    }
     return (
-        <section className="flex h-screen bg-gray-100">
-            <Sidebar />
-            <main className="flex-1 flex flex-col">
-                <TopBar />
-                <article className="flex-grow overflow-auto p-8">
-                    <section>
-                        <header className="mb-6">
-                            <h1 className="text-2xl font-bold mb-4">Billing</h1>
-                            <p className="text-gray-500">
-                                You currently are on <strong className="text-gray-500">Free Version</strong> of Awayme
-                            </p>
-                        </header>
-
-                        {/* Fixed width for cards and horizontal scrolling */}
-                        <div className="flex overflow-x-auto py-4">
-                            {plans.map(plan => (
-                                <div key={plan._id} className="flex-shrink-0 bg-white shadow rounded-lg p-6 mr-4 last:mr-0" style={{ width: '240px',height: '550px' }}>
-                                    <div className="flex items-center justify-between mb-6">
-                                        <h2 className="text-lg font-bold">{plan.name}</h2>
-                                        {plan.current && (
-                                            <div className="text-sm text-white py-1 px-3 bg-black rounded-full">
-                                                Current Plan
-                                            </div>
-                                        )}
-                                    </div>
-                                    <ul className="space-y-4">
-                                        {plan.features.map((feature, idx) => (
-                                            <li key={idx} className="flex items-center gap-2 font-semibold">
-                                                ✓ {feature}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <footer className="mt-4">
-                                        <Button
-                                            buttonText="Upgrade Now"
-                                            buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white w-full py-3"
-                                            onClick={() => handleUpgradeClick(plan._id)}
-                                            isLoading={isLoading}
-                                        />
-                                    </footer>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                </article>
-            </main>
-        </section>
+      <div className="flex items-start gap-4 mt-8">
+        {plans.map((plan: IPlan) => (
+          <PlanCard
+            key={plan?._id}
+            plan={plan}
+            isCurrentPlan={plan?._id === user?.plan?._id}
+            isPlanFree={
+              plan?.planId?.toLowerCase() === PlanTypes.FREE.toLowerCase()
+            }
+          />
+        ))}
+      </div>
     );
+  }
+
+  return (
+    <div className="flex items-start">
+      <Sidebar />
+      <div className="flex-1 h-screen overflow-auto">
+        <TopBar />
+        <div className="px-8 py-4">
+          <div className="flex flex-col pb-8">
+            <h3 className="font-archivo text-2xl leading-[48px] text-heading font-semibold">
+              Billing
+            </h3>
+            <p className="text-base leading-[24px] text-subHeading ">
+              you are currently on the{" "}
+              <span className="font-bold text-accent">{user?.plan?.name}</span>{" "}
+              of Awayme.
+            </p>
+            {renderPlanCards()}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

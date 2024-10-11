@@ -31,7 +31,9 @@ export default function Dashboard() {
       setLoading(true);
       try {
         // compute maxTime based on user plan
-        const maxTime = isPaidUser(user) ? getFourMonthsLaterDate() : getTwoWeeksLaterDate();
+        const maxTime = isPaidUser(user)
+          ? getFourMonthsLaterDate()
+          : getTwoWeeksLaterDate();
         const response = await fetchData(
           `/api/calendar-events?calendarId=${selectedCalendar?._id}&userId=${user?._id}&maxTime=${maxTime}`
         );
