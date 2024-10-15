@@ -4,47 +4,64 @@ import Sidebar from "@/app/components/sidebar";
 import TopBar from "@/app/components/topbar";
 import Input from "@/app/components/input";
 import Button from "@/app/components/button";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useUserContext } from "@/context/userContext";
+import { postData, putData } from "@/utils/fetch";
 
 export default function Account() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [error, setError] = useState({
-    firstNameError: "",
-    lastNameError: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleUpdate = () => {
-    const isValid = validateFields();
-    if (isValid) {
-      const updatedAccountInfo = { firstName, lastName };
-      console.log("Updated account info:", updatedAccountInfo);
+    const { user, setUser, toggleFetchUserDetails, setToggleFetchUserDetails } = useUserContext();
+    const [firstName, setFirstName] = useState(user.firstName);
+    const [lastName, setLastName] = useState(user.lastName);
+    const [error, setError] = useState({
+      firstNameError: "",
+      lastNameError: ""
+    });
+    const [isLoading, setIsLoading] = useState(false);
+  
+  
+    const handleUpdate = async () => {
+      setIsLoading(true);
+      if (validateFields()) {
+        try {
+          const url = `/api/users/${user._id}`; 
+          const body = { firstName, lastName };
+          const updatedUser = await putData(url, body);
+          setUser(updatedUser); 
+          setToggleFetchUserDetails(!toggleFetchUserDetails);
+          console.log("Update successful:", updatedUser);
+        } catch (error: any) {
+          console.error("Failed to update user details:", error.message);
+          setError({
+            firstNameError: error.message || "Update failed",
+            lastNameError: error.message || "Update failed"
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+  
+    const handleCancel = () => {
+      setFirstName(user.firstName);
+      setLastName(user.lastName);
+      setError({ firstNameError: "", lastNameError: "" }); 
+    };
+  
+    function validateFields() {
+      let isValid = true;
+      setError({ firstNameError: "", lastNameError: "" });
+      if (!firstName) {
+        setError(prev => ({ ...prev, firstNameError: "First name is required" }));
+        isValid = false;
+      }
+      if (!lastName) {
+        setError(prev => ({ ...prev, lastNameError: "Last name is required" }));
+        isValid = false;
+      }
+      return isValid;
     }
-  };
-
-  const handleCancel = () => {
-    console.log("Changes cancelled");
-  };
-
-  function validateFields() {
-    let isValid = true;
-    if (!firstName) {
-      setError((error) => ({
-        ...error,
-        firstNameError: "First name is required",
-      }));
-      isValid = false;
-    }
-    if (!lastName) {
-      setError((error) => ({
-        ...error,
-        lastNameError: "Last name is required",
-      }));
-      isValid = false;
-    }
-    return isValid;
-  }
 
   return (
     <div className="flex items-start">
@@ -63,7 +80,6 @@ export default function Account() {
                   hasLabel
                   label="First Name"
                   value={firstName}
-                  placeholder="Enter your first name"
                   onChange={(event) => setFirstName(event.target.value)}
                   hasError={error.firstNameError !== ""}
                   error={error.firstNameError}
@@ -76,7 +92,6 @@ export default function Account() {
                   hasLabel
                   label="Last Name"
                   value={lastName}
-                  placeholder="Enter your last name"
                   onChange={(event) => setLastName(event.target.value)}
                   hasError={error.lastNameError !== ""}
                   error={error.lastNameError}
@@ -88,8 +103,7 @@ export default function Account() {
               type="email"
               hasLabel
               label="Email"
-              value={"shrey@gmail.com"}
-              placeholder="Enter your email address"
+              value={user.email}
               disabled
             />
             <div className="flex items-center gap-8 mt-4">
