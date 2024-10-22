@@ -244,7 +244,7 @@ export default function Register() {
               hasLabel
               label="Confirm Password"
               value={confirmPassword}
-              placeholder="Confirm your password"
+              placeholder="Confirm password"
               onChange={(event) => setConfirmPassword(event.target.value)}
               hasError={error.confirmPasswordError !== ""}
               error={error.confirmPasswordError}
