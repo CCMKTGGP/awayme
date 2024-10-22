@@ -40,7 +40,20 @@ const UserSchema = new Schema(
     },
     timeZone: {
       type: String,
-      default: Intl.DateTimeFormat().resolvedOptions().timeZone, // default time zone is New York
+      default: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+    subscriptionId: {
+      type: String,
+      default: null,
+    },
+    paymentIntentId: {
+      type: String,
+      default: null,
+    },
+    planType: {
+      type: String,
+      enum: ["free", "lifetime", "monthly", "annual"],
+      default: null,
     },
   },
   {

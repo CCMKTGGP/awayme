@@ -73,7 +73,7 @@ export default function Account() {
             <h3 className="font-archivo text-2xl leading-[48px] text-heading font-semibold">
               Account
             </h3>
-            <div className="flex items-center gap-6 w-full">
+            <div className="flex items-start gap-6 w-full">
               <div className="w-[50%]">
                 <Input
                   type="text"
@@ -106,6 +106,30 @@ export default function Account() {
               value={user.email}
               disabled
             />
+            <Dropdown
+              id="selectTimeZone"
+              label="Select Time Zone"
+              isDisabled={isLoading}
+              onClick={(value) => setSelectedTimezone(value?.id)}
+              options={timezones}
+              selectedOption={{
+                id: selectedTimezone,
+                name: selectedTimezone,
+              }}
+              hasError={error.timeZoneError !== ""}
+              error={error.timeZoneError}
+            />
+            {error.apiError && (
+              <ApiError
+                message={error.apiError}
+                setMessage={(value) =>
+                  setError((error) => ({
+                    ...error,
+                    apiError: value,
+                  }))
+                }
+              />
+            )}
             <div className="flex items-center gap-8 mt-4">
               <Button
                 buttonText="Cancel"
@@ -118,6 +142,7 @@ export default function Account() {
                 buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white"
                 onClick={handleUpdate}
                 isLoading={isLoading}
+                isDisabled={isLoading}
               />
             </div>
           </div>

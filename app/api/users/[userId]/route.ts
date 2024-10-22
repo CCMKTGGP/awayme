@@ -53,13 +53,9 @@ export const GET = async (request: Request, context: { params: any }) => {
 // update user api
 export const PUT = async (request: Request, context: { params: any }) => {
   try {
-
     const userId = context.params.userId;
     // extract the fields from the request object
-    const {
-      firstName,
-      lastName,
-    } = await request.json();
+    const { firstName, lastName, timeZone } = await request.json();
 
     // establish the connection with database
     await connect();
@@ -87,6 +83,7 @@ export const PUT = async (request: Request, context: { params: any }) => {
       {
         firstName,
         lastName,
+        timeZone,
       },
       {
         new: true,

@@ -91,13 +91,19 @@ export default function Calendars() {
               <hr />
               <div className="h-[50px]">
                 <p className="text-sm text-subHeading">Name</p>
-                <p className="text-base font-medium leading-md text-heading">
+                <p
+                  title={capitalizeFirstLetter(calendar?.name || "")}
+                  className="text-base font-medium leading-md text-heading truncate max-w-xs"
+                >
                   {capitalizeFirstLetter(calendar?.name || "")}
                 </p>
               </div>
               <div className="h-[50px]">
                 <p className="text-sm text-subHeading">Email</p>
-                <p className="text-base font-medium leading-md text-heading break-words">
+                <p
+                  title={capitalizeFirstLetter(calendar?.email || "")}
+                  className="text-base font-medium leading-md text-heading truncate max-w-xs"
+                >
                   {capitalizeFirstLetter(calendar?.email || "")}
                 </p>
               </div>

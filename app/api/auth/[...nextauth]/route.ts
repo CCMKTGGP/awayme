@@ -9,6 +9,7 @@ import Calendar from "@/lib/models/calendar";
 import { Types } from "mongoose";
 import { encrypt } from "@/utils/crypto";
 import { CalendarTypes } from "@/constants/calendarTypes";
+import Plan from "@/lib/models/plan";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
@@ -31,7 +32,7 @@ const authOptions: NextAuthOptions = {
           response: "code",
         },
       },
-    })
+    }),
   ],
   secret: process.env.NEXT_AUTH_SECRET,
   callbacks: {
@@ -46,6 +47,9 @@ const authOptions: NextAuthOptions = {
         // establish the connection with database
         await connect();
 
+        // load all plans
+        await Plan.find({});
+
         // check if the store exists in the database
         const selectedUser = await User.findById(userData._id).populate({
           path: "plan",
@@ -59,7 +63,7 @@ const authOptions: NextAuthOptions = {
         const selectedCalendar = await Calendar.findOne({
           email: user?.email,
           user: new Types.ObjectId(selectedUser._id),
-          provider: CalendarTypes.GOOGLE
+          provider: CalendarTypes.GOOGLE,
         });
 
         // if the calendar exists in the database
@@ -74,7 +78,7 @@ const authOptions: NextAuthOptions = {
         const calendars = await Calendar.find({
           user: new Types.ObjectId(selectedUser._id),
         });
-        
+
         // check if the user is allowed to import the calendar based on the plan
         if (calendars.length >= selectedUser?.plan?.numberOfCalendarsAllowed) {
           // delete the calendar name from the cookies

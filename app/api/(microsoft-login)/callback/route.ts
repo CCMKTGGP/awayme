@@ -2,6 +2,7 @@ import { CalendarTypes } from "@/constants/calendarTypes";
 import connect from "@/lib/db";
 import { msalConfig } from "@/lib/microsoftClient";
 import Calendar from "@/lib/models/calendar";
+import Plan from "@/lib/models/plan";
 import User from "@/lib/models/user";
 import { encrypt } from "@/utils/crypto";
 import { ConfidentialClientApplication } from "@azure/msal-node";
@@ -28,6 +29,9 @@ export async function GET(req: NextRequest) {
 
     // establish the connection with database
     await connect();
+
+    // load all plans
+    await Plan.find({});
 
     // check if the store exists in the database
     const selectedUser = await User.findById(userData._id).populate({
@@ -69,7 +73,7 @@ export async function GET(req: NextRequest) {
     const selectedCalendar = await Calendar.findOne({
       email: account?.username,
       user: new Types.ObjectId(selectedUser._id),
-      provider: CalendarTypes.OUTLOOK
+      provider: CalendarTypes.OUTLOOK,
     });
 
     // if the calendar exists in the database

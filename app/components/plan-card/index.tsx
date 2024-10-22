@@ -7,7 +7,9 @@ export default function PlanCard({
   isCurrentPlan,
   isPlanFree,
   isLoading,
+  isDisabled,
   onUpgrade,
+  onCancel,
 }: IPlanCardProps) {
   const { name, price, features } = plan;
   return (
@@ -38,12 +40,20 @@ export default function PlanCard({
       </div>
       <hr className="mb-6" />
       <div className="h-12 flex justify-center">
+        {isCurrentPlan && !isPlanFree ? (
+          <Button
+            buttonClassName="rounded-md hover:bg-error/20 bg-transparent text-error font-semibold"
+            isDisabled={isDisabled}
+            buttonText="Cancel Subscription"
+            onClick={() => onCancel(plan)}
+          />
+        ) : null}
         {!isCurrentPlan && !isPlanFree ? (
           <Button
             buttonText="Upgrade Now"
             buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white"
             isLoading={isLoading}
-            isDisabled={isLoading}
+            isDisabled={isDisabled}
             onClick={() => onUpgrade(plan)}
           />
         ) : null}

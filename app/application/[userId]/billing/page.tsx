@@ -9,9 +9,15 @@ import { fetchData, postData } from "@/utils/fetch";
 import PlanCard from "@/app/components/plan-card";
 import { PlanTypes } from "@/utils/planTypes";
 import ApiError from "@/app/components/api-error";
+import { useCalendarContext } from "@/context/calendarContext";
+import ApiSuccess from "@/app/components/api-success";
+import DeleteModal from "@/app/components/delete-modal";
 
 export default function Billing() {
-  const { user } = useUserContext();
+  const { user, toggleFetchUserDetails, setToggleFetchUserDetails } =
+    useUserContext();
+  const { toggleFetchUserCalendars, setToggleFetchUserCalendars } =
+    useCalendarContext();
   const [plans, setPlans] = useState<IPlan[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState({
@@ -23,6 +29,16 @@ export default function Billing() {
   }>({
     planId: "",
     isLoading: false,
+  });
+  const [cancelSubscriptionLoading, setCancelSubscriptionLoading] =
+    useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [deleteModal, setDeleteModal] = useState<{
+    toggle: boolean;
+    data: IPlan | null;
+  }>({
+    toggle: false,
+    data: null,
   });
 
   useEffect(() => {
@@ -64,6 +80,35 @@ export default function Billing() {
     }
   }
 
+  async function handleDeleteSubscription(planId: string | any) {
+    setCancelSubscriptionLoading(true);
+    try {
+      const response = await postData("/api/cancel-subscription", {
+        planId,
+        userId: user._id,
+      });
+      const { message } = response;
+      setSuccessMessage(message);
+      setDeleteModal({
+        toggle: false,
+        data: null,
+      });
+      setToggleFetchUserDetails(!toggleFetchUserDetails);
+      setToggleFetchUserCalendars(!toggleFetchUserCalendars);
+    } catch (err: any) {
+      setDeleteModal({
+        toggle: false,
+        data: null,
+      });
+      setError((error) => ({
+        ...error,
+        apiError: err.message,
+      }));
+    } finally {
+      setCancelSubscriptionLoading(false);
+    }
+  }
+
   function renderPlanCards() {
     if (isLoading) {
       return (
@@ -89,9 +134,20 @@ export default function Billing() {
             isLoading={
               checkoutLoading.planId === plan._id && checkoutLoading.isLoading
             }
+            isDisabled={
+              checkoutLoading.planId === plan._id ||
+              checkoutLoading.isLoading ||
+              cancelSubscriptionLoading
+            }
             isPlanFree={
               plan?.planId?.toLowerCase() === PlanTypes.FREE.toLowerCase()
             }
+            onCancel={(plan) => {
+              setDeleteModal({
+                toggle: true,
+                data: plan,
+              });
+            }}
             onUpgrade={(plan) => handleCheckout(plan._id)}
           />
         ))}
@@ -125,10 +181,30 @@ export default function Billing() {
                 }
               />
             )}
+            {successMessage && (
+              <ApiSuccess
+                message={successMessage}
+                setMessage={(value) => setSuccessMessage(value)}
+              />
+            )}
             {renderPlanCards()}
           </div>
         </div>
       </div>
+      {deleteModal.toggle && (
+        <DeleteModal
+          heading="Cancel Subsciption"
+          subHeading={`Are you sure you want to cancel your subscription for plan named "${deleteModal?.data?.name}". Please keep in mind that these changes will not be reverted`}
+          isLoading={cancelSubscriptionLoading}
+          onCancel={() =>
+            setDeleteModal({
+              toggle: false,
+              data: null,
+            })
+          }
+          onConfirm={() => handleDeleteSubscription(deleteModal?.data?._id)}
+        />
+      )}
     </div>
   );
 }

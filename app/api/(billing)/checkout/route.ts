@@ -1,4 +1,3 @@
-// app/api/checkout/route.ts
 import Calendar from "@/lib/models/calendar";
 import Plan from "@/lib/models/plan";
 import User from "@/lib/models/user";
@@ -55,8 +54,8 @@ export async function POST(req: NextRequest) {
     user: new Types.ObjectId(user._id),
   });
 
-  // check if the user is allowed to import the calendar based on the plan
-  if (calendars.length >= plan?.numberOfCalendarsAllowed) {
+  // check if the number of user calendars are less than the number of calendars allowed for seleected plan
+  if (calendars.length > plan?.numberOfCalendarsAllowed) {
     // throw an error stating that user does not enough credits to import
     return new NextResponse(
       JSON.stringify({
@@ -83,7 +82,10 @@ export async function POST(req: NextRequest) {
       mode = PAYMENT_CONSTANTS.SUBSCRIPTION_MODE;
       break;
     default:
-      return NextResponse.json({ error: "Invalid plan type" }, { status: 400 });
+      return new NextResponse(
+        JSON.stringify({ message: "Invalid plan type!" }),
+        { status: 400 }
+      );
   }
 
   // Validate that priceId is not undefined
@@ -96,13 +98,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  try {
-    const metadata = {
-      userId: String(userId),
-      planType: String(planId),
-      nextCalendarUpdateDate: "",
-    };
+  // Metadata for Checkout session
+  const metadata = {
+    userId: String(userId),
+    planType: String(plan?.planId), // e.g., 'lifetime', 'monthly', 'annual'
+    planId: String(planId), // Plan ID to track what plan the user is purchasing
+    nextCalendarUpdateDate: "", // Optional, depending on your logic
+  };
 
+  try {
+    // Create the Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -111,6 +116,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: mode,
+      customer_email: user.email,
       billing_address_collection: "required",
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/application/${userId}/payment-success`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/application/${userId}/billing`,

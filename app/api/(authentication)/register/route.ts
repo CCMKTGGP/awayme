@@ -10,6 +10,7 @@ import { sendEmail } from "@/utils/sendEmail";
 import { IUser } from "@/context/userContext";
 import Plan from "@/lib/models/plan";
 import { Types } from "mongoose";
+import { PlanTypes } from "@/utils/planTypes";
 
 function getVerificationToken(user: IUser): string {
   // Generate the token
@@ -50,7 +51,9 @@ export const POST = async (request: Request) => {
     // fetch all plans
     const plans = await Plan.find();
 
-    const freePlan: any = plans.filter((plan) => plan.planId === "free");
+    const freePlan: any = plans.filter(
+      (plan) => plan.planId === PlanTypes.FREE.toLowerCase()
+    );
 
     // create the new user object
     const newUser = new User({
