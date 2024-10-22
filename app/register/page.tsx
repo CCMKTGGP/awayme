@@ -242,7 +242,7 @@ export default function Register() {
             <Input
               type="password"
               hasLabel
-              label="Confirm Password"
+              label="Confirm your Password"
               value={confirmPassword}
               placeholder="Confirm password"
               onChange={(event) => setConfirmPassword(event.target.value)}
