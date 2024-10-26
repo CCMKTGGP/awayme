@@ -17,11 +17,13 @@ export default function Register() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [timezones, setTimezones] = useState<any[]>([]);
   const [selectedTimezone, setSelectedTimezone] = useState("");
   const [error, setError] = useState({
     emailError: "",
     passwordError: "",
+    confirmPasswordError: "",
     firstNameError: "",
     lastNameError: "",
     timeZoneError: "",
@@ -106,6 +108,22 @@ export default function Register() {
     return true;
   }
 
+  function checkConfirmPassword() {
+    if (password !== confirmPassword) {
+      setError((error) => ({
+        ...error,
+        confirmPasswordError: "Passwords do not match",
+      }));
+      return false;
+    }
+    setError((error) => ({
+      ...error,
+      confirmPasswordError: "",
+    }));
+    return true;
+  }
+  
+
   function handleTimezoneChange(timeZone: string) {
     setSelectedTimezone(timeZone);
   }
@@ -116,6 +134,7 @@ export default function Register() {
       checkEmail(),
       checkFirstName(),
       checkLastName(),
+      checkConfirmPassword(),
     ].every(Boolean);
 
     if (!ALL_CHECKS_PASS) return;
@@ -219,6 +238,18 @@ export default function Register() {
               error={error.passwordError}
               disabled={isLoading}
             />
+            <Input
+              type="password"
+              hasLabel
+              label="Confirm Password"
+              value={confirmPassword}
+              placeholder="Confirm your password"
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              hasError={error.confirmPasswordError !== ""}
+              error={error.confirmPasswordError}
+              disabled={isLoading}
+            />
+
             <Dropdown
               id="selectTimeZone"
               label="Select Time Zone"
