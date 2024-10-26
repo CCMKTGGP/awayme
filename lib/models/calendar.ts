@@ -11,13 +11,7 @@ const CalendarSchema = new Schema(
     provider: {
       type: String,
     },
-    access_token: {
-      type: String,
-    },
     refresh_token: {
-      type: String,
-    },
-    expires_at: {
       type: String,
     },
     user: {
