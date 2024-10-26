@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
     });
 
     // extract the name, email, access token and expiry from result
-    const { account, accessToken, expiresOn } = result;
+    const { account } = result;
 
     // check if the calendar exists in the database
     const selectedCalendar = await Calendar.findOne({
@@ -85,9 +85,6 @@ export async function GET(req: NextRequest) {
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/error?error=user's calendar is already imported!`
       );
     }
-
-    // excrypt the access token and refresh token
-    const access_token = encrypt(accessToken);
 
     // fetch refresh token
 
@@ -107,10 +104,8 @@ export async function GET(req: NextRequest) {
     const newCalendar = new Calendar({
       name: calendarName,
       email: account?.username,
-      access_token,
       refresh_token,
       provider: CalendarTypes.OUTLOOK,
-      expires_at: expiresOn,
       user: new Types.ObjectId(selectedUser._id),
     });
 

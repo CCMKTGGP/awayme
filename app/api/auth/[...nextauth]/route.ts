@@ -89,12 +89,10 @@ const authOptions: NextAuthOptions = {
           );
         }
 
-        // extract the access and the refresh token
-        const accessToken = account?.access_token || "";
+        // extract the refresh token
         const refreshToken = account?.refresh_token || "";
 
-        // excrypt the access token and refresh token
-        const access_token = encrypt(accessToken);
+        // excrypt the refresh token
         const refresh_token = encrypt(refreshToken);
 
         // add a new calendar in the database
@@ -103,10 +101,8 @@ const authOptions: NextAuthOptions = {
         const newCalendar = new Calendar({
           name: calendarName,
           email: user?.email,
-          access_token,
           refresh_token,
           provider: CalendarTypes.GOOGLE,
-          expires_at: account?.expires_at,
           user: new Types.ObjectId(selectedUser._id),
         });
 

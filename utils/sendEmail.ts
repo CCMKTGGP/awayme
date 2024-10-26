@@ -12,7 +12,7 @@ export const sendEmail = async (
 
     const mailOptions = {
       from: {
-        name: "Away Me",
+        name: "AwayMe",
         email: process.env.SMTP_FROM_EMAIL as string,
       },
       to: userEmail,

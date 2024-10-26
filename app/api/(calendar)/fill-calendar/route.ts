@@ -80,44 +80,44 @@ export async function POST(request: Request) {
 
   //   store events based on the provider
   if (calendar?.provider.toLowerCase() === CalendarTypes.GOOGLE.toLowerCase()) {
-    // fetch the encrpted access token and refresh token
-    const { access_token, refresh_token } = calendar;
+    // fetch the encrpted refresh token
+    const { refresh_token } = calendar;
 
-    // decrypt the access token and refresh token
-    const accessToken = decrypt(access_token);
+    // decrypt the refresh token
     const refreshToken = decrypt(refresh_token);
 
+    // fetch latest access token.
+    const response = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=${process.env.GOOGLE_CLIENT_ID}&client_secret=${process.env.GOOGLE_CLIENT_SECRET}`,
+    });
+
+    // extract the access token
+    const { access_token } = await response.json();
+
     // pass it to the function
-    result = await storeGoogleEvents({ accessToken, refreshToken, events });
+    result = await storeGoogleEvents({
+      accessToken: access_token,
+      refreshToken,
+      events,
+    });
   } else if (
     calendar?.provider.toLowerCase() === CalendarTypes.OUTLOOK.toLowerCase()
   ) {
-    // fetch the encrpted access token and refresh token
-    const { access_token, refresh_token, expires_at } = calendar;
+    // fetch the encrpted refresh token
+    const { refresh_token } = calendar;
 
-    const current_date = new Date().getTime();
-    const expires_at_time = new Date(expires_at).getTime();
-
-    // decrypt the access token and refresh token
-    let accessToken = decrypt(access_token);
+    // decrypt the refresh token
     const refreshToken = decrypt(refresh_token);
+    // fetch latest access token.
+    const response: any = await cca.acquireTokenByRefreshToken({
+      refreshToken: refreshToken,
+      scopes: ["User.Read", "Calendars.Read"],
+    });
 
-    if (expires_at_time < current_date) {
-      // fetch latest access token.
-      const result: any = await cca.acquireTokenByRefreshToken({
-        refreshToken: refreshToken,
-        scopes: ["User.Read", "Calendars.Read"],
-      });
-
-      // extract the name, email, access token and expiry from result
-      const { accessToken: access_token, expiresOn } = result;
-      accessToken = access_token;
-      const token = encrypt(access_token);
-
-      calendar.access_token = token;
-      calendar.expires_at = expiresOn;
-      await calendar.save();
-    }
+    // extract the access token from result
+    const { accessToken } = response;
 
     // pass it to the function
     result = await storeOutlookEvents({
