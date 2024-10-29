@@ -166,7 +166,7 @@ export default function Billing() {
               Billing
             </h3>
             <p className="text-base leading-[24px] text-subHeading">
-              you are currently on the{" "}
+            You're currently on the{" "}
               <span className="font-bold text-accent">{user?.plan?.name}</span>{" "}
               of Awayme.
             </p>

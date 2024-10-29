@@ -144,7 +144,7 @@ export default function FillCalendar() {
     if (isFetchingComputedEventsLoading) {
       return (
         <div className="text-heading text-lg mt-4">
-          Fetching computed events...
+          Creating random events...
         </div>
       );
     }
@@ -152,7 +152,7 @@ export default function FillCalendar() {
       return (
         <div className="flex flex-col gap-4 mt-4">
           <div className="text-subHeading text-lg">
-            Please confirm the events you want to create.
+          Click confirm if you're happy with this random fill. Or click start over to get new events.
           </div>
           <div className="flex items-center gap-8">
             <Button
@@ -164,7 +164,7 @@ export default function FillCalendar() {
             <Button
               isDisabled={isFillingCalendarLoading}
               isLoading={isFillingCalendarLoading}
-              buttonText="Fill Calendar"
+              buttonText="Confirm Fill"
               buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white"
               onClick={() => onFillCalendar()}
             />
@@ -174,7 +174,7 @@ export default function FillCalendar() {
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-[#854545] rounded-[8px]" />
                 <p className="text-sm leading-md text-heading">
-                  Computed Events
+                AwayMe Events
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -294,7 +294,7 @@ export default function FillCalendar() {
             <Button
               isDisabled={isFetchingComputedEventsLoading}
               isLoading={isFetchingComputedEventsLoading}
-              buttonText="Compute Events"
+              buttonText="Create Events"
               buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white"
               onClick={() => fetchPaidComputedEvents()}
             />
@@ -313,7 +313,7 @@ export default function FillCalendar() {
         <Button
           isDisabled={isFetchingComputedEventsLoading}
           isLoading={isFetchingComputedEventsLoading}
-          buttonText="Compute Events"
+          buttonText="Create Events"
           buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white"
           onClick={() => fetchFreeComputedEvents()}
         />
@@ -341,21 +341,18 @@ export default function FillCalendar() {
             </h3>
             {isPaidUser(user) ? (
               <p className="text-base leading-[24px] font-medium text-subHeading max-w-[60%]">
-                Fill the form according to your need. adjust the fill
-                percentage, the start and the end date accouding to your need
+                Select a calendar, a fill percentage, and a date range. Click "create events" to fill. You'll be asked to confirm in the next step.
               </p>
             ) : (
               <p className="text-base leading-[24px] font-medium text-subHeading max-w-[60%]">
-                Select the Calendar to fill. Because you are on free version
-                only 20% is allowed to fill. You will only be allowed to fill
-                once in two weeks
+                Select a calendar to fill. Because you're on the free version, you're only able to fill 20%. You will be able to fill it again in two weeks. (Insert Link) Upgrade Now.
               </p>
             )}
             <div className="flex items-center gap-8 mt-4">
               <Dropdown
                 isDisabled={fetchEvents}
                 id="calendar"
-                label="Select Calendar"
+                label="Choose a Calendar"
                 onClick={(value) => {
                   const calendar: any = calendars.find(
                     (calendar) => calendar?._id === value?.id

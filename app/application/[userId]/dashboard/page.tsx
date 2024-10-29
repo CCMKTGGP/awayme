@@ -102,8 +102,7 @@ export default function Dashboard() {
                   Dashboard
                 </h3>
                 <p className="text-base leading-[24px] font-medium text-subHeading ">
-                  A detailed view of your calendar events. You can switch
-                  between your calendars here
+                Fill, Sync and switch between calendars here.
                 </p>
                 <div className="flex items-center gap-8 mt-6">
                   <Button
@@ -119,7 +118,7 @@ export default function Dashboard() {
                     <Button
                       isDisabled={calendars.length < 2}
                       buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white"
-                      buttonText="Merge Calendar"
+                      buttonText="Sync Calendar"
                       onClick={() =>
                         router.push(
                           `/application/${user?._id}/dashboard/merge-calendar`
@@ -134,12 +133,12 @@ export default function Dashboard() {
                   Calendar View
                 </h3>
                 <p className="text-base leading-[24px] font-medium text-subHeading ">
-                  Select the calendar to view the events
+                Select a calendar to its events.
                 </p>
                 <div className="flex mt-2">
                   <Dropdown
                     id="selectCalendar"
-                    label="Select Calendar"
+                    label="Select a Calendar"
                     isDisabled={loading}
                     onClick={(value) => {
                       const calendar: any = calendars.find(
