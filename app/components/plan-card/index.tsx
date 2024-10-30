@@ -8,6 +8,7 @@ export default function PlanCard({
   isPlanFree,
   isLoading,
   isDisabled,
+  isRecomended,
   onUpgrade,
   onCancel,
 }: IPlanCardProps) {
@@ -27,6 +28,14 @@ export default function PlanCard({
           <div className="absolute top-[-10px] right-[20px] inline-block text-xs px-3 py-1 rounded-[8px] bg-heading text-white font-bold">
             Current Plan
           </div>
+        )}
+        {isRecomended && !isCurrentPlan && (
+          <>
+            <div className="absolute inset-0 border-2 border-transparent rounded-[16px] animate-border-gradient"></div>
+            <div className="absolute top-[-10px] right-[20px] inline-block text-xs px-3 py-1 rounded-[8px] animate-background-gradient text-white font-bold">
+              Recomended
+            </div>
+          </>
         )}
       </div>
       <hr className="mb-4" />
