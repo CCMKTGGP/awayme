@@ -156,8 +156,8 @@ export default function Calendars() {
               Calendars
             </h3>
             <p className="text-base leading-[24px] font-medium text-subHeading ">
-              Here are all the calendars you have imported. You can add more
-              calendars here.
+              Below are your imported calendars. Import additional calendars
+              below.
             </p>
             <div className="flex mt-6">
               <Button

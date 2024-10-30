@@ -13,7 +13,7 @@ import Button from "@/app/components/button";
 import { useRouter } from "next/navigation";
 import MyCalendar from "@/app/components/calendar";
 import { isPaidUser } from "@/utils/checkProtectedRoutes";
-import { getFourMonthsLaterDate, getTwoWeeksLaterDate } from "@/utils/time";
+import { getMaxTime } from "@/utils/time";
 
 export default function MergeCalendar() {
   const router = useRouter();
@@ -34,9 +34,7 @@ export default function MergeCalendar() {
   });
 
   // compute maxTime based on user plan
-  const maxTime = isPaidUser(user)
-    ? getFourMonthsLaterDate()
-    : getTwoWeeksLaterDate();
+  const maxTime = getMaxTime(user);
 
   async function fetchSourceEvents() {
     setIsLoading(true);
@@ -105,7 +103,7 @@ export default function MergeCalendar() {
     if (isLoading) {
       return (
         <div className="text-heading text-lg mt-4">
-          Fetching your calendar events
+          Fetching source calendar events...
         </div>
       );
     }
@@ -118,11 +116,11 @@ export default function MergeCalendar() {
               calendar to the destination calendar.
             </p>
             <p className="text-base leading-[24px] font-medium text-subHeading">
-              we will copy all the events from{" "}
+              AwayMe will copy events from{" "}
               <span className="font-bold text-heading">
                 {sourceCalendar?.name}
               </span>{" "}
-              {" --> "}
+              {" to "}
               <span className="font-bold text-heading">
                 {destinationCalendar?.name}
               </span>
@@ -138,7 +136,7 @@ export default function MergeCalendar() {
             <Button
               isDisabled={isFillingCalendarLoading}
               isLoading={isFillingCalendarLoading}
-              buttonText="Merge Calendar"
+              buttonText="Confirm Sync"
               buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white"
               onClick={() => onFillCalendar()}
             />
@@ -210,7 +208,7 @@ export default function MergeCalendar() {
               href={`/application/${user?._id}/dashboard`}
               className="text-heading underline font-medium text-md leading-md"
               onClick={(event) => {
-                if(isFillingCalendarLoading) {
+                if (isFillingCalendarLoading) {
                   event.preventDefault();
                 }
               }}
@@ -220,11 +218,12 @@ export default function MergeCalendar() {
           </div>
           <div className="flex flex-col pb-12">
             <h3 className="font-archivo text-2xl leading-[48px] text-heading font-semibold">
-              Merge Calendar
+              Sync Calendar
             </h3>
             <p className="text-base leading-[24px] font-medium text-subHeading ">
-              Select the source and the designation calendar. All the events
-              from source will be merged into the destination calendar
+              Select source and destination calendars. Events from your source
+              calendar will be merged into the destination calendar. <br />{" "}
+              You'll be asked to confirm in the next step.
             </p>
             <div className="flex items-center gap-8 mt-4">
               <Dropdown

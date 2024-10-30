@@ -12,11 +12,12 @@ export default function Home() {
         <div className="w-[500px] p-8 flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <h1 className="font-archivo text-3xl leading-[48px] font-bold text-heading">
-              Master Your Time, <br /> Appear Busy with Ease!
+              Master Your Schedule, Build Credibility, and Find Time for What
+              Matters.
             </h1>
             <p className="font-archivo text-lg leading-[36px] text-subHeading">
-              Import calendars from any platform and fill your schedule with
-              smart, random events to stay on top of things!
+              Fill your calendar with random events and take ownership of your
+              schedule using AwayMe.
             </p>
           </div>
           <Button

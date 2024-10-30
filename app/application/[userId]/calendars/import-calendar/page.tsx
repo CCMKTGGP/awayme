@@ -44,10 +44,11 @@ export default function ImportCalendar() {
           </div>
           <div className="flex flex-col pb-12">
             <h3 className="font-archivo text-2xl leading-[48px] text-heading font-bold">
-              Import Calendar
+              Import a Calendar
             </h3>
             <p className="text-base leading-[24px] font-medium text-subHeading ">
-              Select the provider. We only support Google and Microsoft for now.
+              Select the provider. AwayMe currently supports only Google and
+              Microsoft calendars.
             </p>
             <div className="flex items-center gap-4 mt-8">
               <button

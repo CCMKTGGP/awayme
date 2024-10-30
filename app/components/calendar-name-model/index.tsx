@@ -68,7 +68,7 @@ export default function CalendarNameModel({
           </button>
         </div>
         <h3 className="font-archivo text-2xl leading-[36px] text-heading font-bold">
-          Import Calendar
+          Import a Calendar
         </h3>
         <div className="my-2">
           <Input
@@ -77,7 +77,7 @@ export default function CalendarNameModel({
             value={name}
             maxLength={40}
             label="Calendar Name"
-            placeholder="Enter your calendar name"
+            placeholder="Give your calendar a name"
             onChange={(event) => setName(event.target.value)}
             hasError={error.nameError !== ""}
             error={error.nameError}
@@ -107,7 +107,7 @@ export default function CalendarNameModel({
             isDisabled={isLoading || hasMaxLimitReached()}
             isLoading={isLoading}
             buttonClassName="rounded-md shadow-button hover:shadow-buttonHover bg-accent text-white"
-            buttonText="Confirm"
+            buttonText="Import"
             onClick={() => handleAddCalendarName()}
           />
         </div>

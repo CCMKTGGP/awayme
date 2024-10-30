@@ -1,12 +1,31 @@
+import { IUser } from "@/context/userContext";
 import moment from "moment";
 import "moment-timezone";
+import { PlanTypes } from "./planTypes";
 
 export function getTwoWeeksLaterDate() {
   return moment().add(2, "weeks").toISOString();
 }
 
-export function getFourMonthsLaterDate() {
-  return moment().add(3, "months").toISOString();
+export function getTwoMonthsLaterDate() {
+  return moment().add(2, "months").toISOString();
+}
+
+export function getOneYearLaterDate() {
+  return moment().add(1, "year").toISOString();
+}
+
+export function getMaxTime(user: IUser) {
+  if (user?.plan?.planId?.toLowerCase() === PlanTypes.LIFETIME.toLowerCase()) {
+    return getOneYearLaterDate();
+  }
+  if (user?.plan?.planId?.toLowerCase() === PlanTypes.ANNUAL.toLowerCase()) {
+    return getTwoMonthsLaterDate();
+  }
+  if (user?.plan?.planId?.toLowerCase() === PlanTypes.MONTHLY.toLowerCase()) {
+    return getTwoMonthsLaterDate();
+  }
+  return getTwoWeeksLaterDate();
 }
 
 export function convertLocalToUtc(dateTimeStr: string, userTimeZone: string) {
