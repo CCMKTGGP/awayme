@@ -19,23 +19,22 @@ export default function PlanCard({
         isCurrentPlan ? "border-heading" : "border-stroke/20"
       }`}
     >
+      {isCurrentPlan && (
+        <div className="absolute top-[-10px] right-[20px] inline-block text-xs px-3 py-1 rounded-[8px] bg-heading text-white font-bold">
+          Current Plan
+        </div>
+      )}
+      {isRecomended && !isCurrentPlan && (
+        <>
+          <div className="absolute top-[-10px] right-[20px] inline-block text-xs px-3 py-1 rounded-[8px] animate-background-gradient text-white font-bold">
+            Recomended
+          </div>
+        </>
+      )}
       <div className="h-24">
         <p className="text-base font-bold text-heading">{name}</p>
         {!isPlanFree && (
           <p className="text-sm mt-2 text-heading">Price: {price}</p>
-        )}
-        {isCurrentPlan && (
-          <div className="absolute top-[-10px] right-[20px] inline-block text-xs px-3 py-1 rounded-[8px] bg-heading text-white font-bold">
-            Current Plan
-          </div>
-        )}
-        {isRecomended && !isCurrentPlan && (
-          <>
-            <div className="absolute inset-0 border-2 border-transparent rounded-[16px] animate-border-gradient"></div>
-            <div className="absolute top-[-10px] right-[20px] inline-block text-xs px-3 py-1 rounded-[8px] animate-background-gradient text-white font-bold">
-              Recomended
-            </div>
-          </>
         )}
       </div>
       <hr className="mb-4" />

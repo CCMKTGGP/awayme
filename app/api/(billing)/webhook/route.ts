@@ -97,4 +97,6 @@ export const POST = async (req: NextRequest) => {
       console.log(`Unhandled event type ${event.type}`);
       return new NextResponse("Received", { status: 200 });
   }
+
+  return new NextResponse("Webhook Received: ", { status: 200 });
 };
