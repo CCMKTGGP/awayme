@@ -61,7 +61,6 @@ export const POST = async (req: NextRequest) => {
       break;
     case "customer.subscription.created":
     case "customer.subscription.updated":
-    case "customer.subscription.deleted":
       const subscription = event.data.object as Stripe.Subscription;
       const userIdFromMetadata = subscription.metadata?.userId;
       const plan_id = subscription.metadata?.planId;
@@ -70,14 +69,11 @@ export const POST = async (req: NextRequest) => {
       if (userIdFromMetadata) {
         await connect();
 
-        const updateFields =
-          event.type === "customer.subscription.deleted"
-            ? { subscriptionId: null, planType: null }
-            : {
-                subscriptionId: subscription.id,
-                planType: plan_type,
-                plan: new Types.ObjectId(plan_id),
-              };
+        const updateFields = {
+          subscriptionId: subscription.id,
+          planType: plan_type,
+          plan: new Types.ObjectId(plan_id),
+        };
 
         try {
           await User.findOneAndUpdate(
