@@ -122,7 +122,6 @@ export default function Register() {
     }));
     return true;
   }
-  
 
   function handleTimezoneChange(timeZone: string) {
     setSelectedTimezone(timeZone);
@@ -174,7 +173,7 @@ export default function Register() {
   return (
     <main className="flex flex-col">
       <AuthHeader />
-      <div className="h-[110vh] flex items-center justify-center gap-20">
+      <div className="h-[125vh] flex items-center justify-center gap-20">
         <img
           src="./auth-illustration.png"
           alt="Auth Illustration"

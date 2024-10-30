@@ -69,14 +69,17 @@ export default function Billing() {
         userId: user._id,
       });
       const { sessionUrl } = response?.data;
+      if (sessionUrl === "") {
+        window.location.reload();
+      }
       window.location.href = sessionUrl;
-    } catch (error) {
+    } catch (error: any) {
       setError((err: any) => ({
         ...err,
-        apiError: err?.message,
+        apiError: error?.message,
       }));
     } finally {
-      setCheckoutLoading({ planId, isLoading: false });
+      setCheckoutLoading({ planId: "", isLoading: false });
     }
   }
 
@@ -141,6 +144,9 @@ export default function Billing() {
             }
             isPlanFree={
               plan?.planId?.toLowerCase() === PlanTypes.FREE.toLowerCase()
+            }
+            isRecomended={
+              plan?.planId?.toLowerCase() === PlanTypes.LIFETIME.toLowerCase()
             }
             onCancel={(plan) => {
               setDeleteModal({

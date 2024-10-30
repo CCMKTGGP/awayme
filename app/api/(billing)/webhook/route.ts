@@ -36,19 +36,6 @@ export const POST = async (req: NextRequest) => {
         try {
           await connect();
 
-          // get user details
-          const user = await User.findById(userId);
-
-          // check if the user already has a subscription.
-          // if yes then we need to cancel that subscription
-          if (user.subscriptionId) {
-            // cancel the current subscription
-            await stripe.subscriptions.cancel(user.subscriptionId);
-            user.subscriptionId = null;
-            user.planType = null;
-            await user.save();
-          }
-
           let updateData: any = {
             planType,
             plan: new Types.ObjectId(planId),
@@ -72,7 +59,39 @@ export const POST = async (req: NextRequest) => {
         }
       }
       break;
-    // case ""
+    case "customer.subscription.created":
+    case "customer.subscription.updated":
+    case "customer.subscription.deleted":
+      const subscription = event.data.object as Stripe.Subscription;
+      const userIdFromMetadata = subscription.metadata?.userId;
+      const plan_id = subscription.metadata?.planId;
+      const plan_type = subscription.metadata?.planType;
+
+      if (userIdFromMetadata) {
+        await connect();
+
+        const updateFields =
+          event.type === "customer.subscription.deleted"
+            ? { subscriptionId: null, planType: null }
+            : {
+                subscriptionId: subscription.id,
+                planType: plan_type,
+                plan: new Types.ObjectId(plan_id),
+              };
+
+        try {
+          await User.findOneAndUpdate(
+            { _id: userIdFromMetadata },
+            updateFields
+          );
+        } catch (err: any) {
+          console.log(
+            `Failed to update user for event ${event.type}:`,
+            err.message
+          );
+        }
+      }
+      break;
 
     default:
       console.log(`Unhandled event type ${event.type}`);

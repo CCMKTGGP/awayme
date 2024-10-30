@@ -106,35 +106,106 @@ export async function POST(req: NextRequest) {
     nextCalendarUpdateDate: "", // Optional, depending on your logic
   };
 
-  try {
-    // Create the Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: mode,
-      customer_email: user.email,
-      billing_address_collection: "required",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/application/${userId}/payment-success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/application/${userId}/billing`,
-      metadata,
-    });
-
+  // check if the customer already has a subscription and want to switch to one time payment.
+  // in that case we need to prompt him to cancel the subscription and then pay with the new plan.
+  if (mode === PAYMENT_CONSTANTS.PAYMENT_MODE && user.subscriptionId) {
+    // Prompt the user to cancel the subscription
     return new NextResponse(
       JSON.stringify({
-        message: "Url Created successfully!",
-        data: { sessionUrl: session.url, metadata: metadata },
+        message:
+          "You have a subscription. Please cancel it before switching to lifetime payment.",
       }),
+      { status: 400 }
+    );
+  }
+
+  try {
+    if (mode === PAYMENT_CONSTANTS.SUBSCRIPTION_MODE && user.subscriptionId) {
+      // Retrieve the subscription to get the subscription item ID
+      const subscription = await stripe.subscriptions.retrieve(
+        user.subscriptionId
+      );
+
+      // Get the subscription item ID from the subscription's items array
+      const subscriptionItemId = subscription.items.data[0].id;
+
+      // Update existing subscription
+      const updatedSubscription = await stripe.subscriptions.update(
+        user.subscriptionId,
+        {
+          proration_behavior: "none",
+          items: [
+            {
+              id: subscriptionItemId,
+              deleted: true,
+            },
+            {
+              price: priceId,
+            },
+          ],
+          metadata,
+        }
+      );
+
+      return new NextResponse(
+        JSON.stringify({
+          message: "Subscription updated successfully!",
+          data: { sessionUrl: "", metadata: metadata },
+        }),
+        { status: 200 }
+      );
+    } else if (
+      mode === PAYMENT_CONSTANTS.SUBSCRIPTION_MODE &&
+      !user.subscriptionId
+    ) {
+      // Create new subscription
+      const session = await stripe.checkout.sessions.create({
+        line_items: [{ price: priceId, quantity: 1 }],
+        mode: mode,
+        customer_email: user.email,
+        billing_address_collection: "required",
+        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/application/${userId}/payment-success`,
+        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/application/${userId}/billing`,
+        metadata,
+      });
+
+      return new NextResponse(
+        JSON.stringify({
+          message: "Url Created successfully!",
+          data: { sessionUrl: session.url, metadata: metadata },
+        }),
+        {
+          status: 200,
+        }
+      );
+    } else {
+      // Handle lifetime plan (one-time payment)
+      const session = await stripe.checkout.sessions.create({
+        line_items: [{ price: priceId, quantity: 1 }],
+        mode: mode,
+        customer_email: user.email,
+        billing_address_collection: "required",
+        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/application/${userId}/payment-success`,
+        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/application/${userId}/billing`,
+        metadata,
+      });
+
+      return new NextResponse(
+        JSON.stringify({
+          message: "Url Created successfully!",
+          data: { sessionUrl: session.url, metadata: metadata },
+        }),
+        {
+          status: 200,
+        }
+      );
+    }
+  } catch (error) {
+    return new NextResponse(
+      JSON.stringify({ message: "Error in checkout " + error }),
       {
-        status: 200,
+        status: 500,
       }
     );
-  } catch (error) {
-    return new NextResponse("Error in checkout " + error, {
-      status: 500,
-    });
   }
 }

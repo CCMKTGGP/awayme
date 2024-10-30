@@ -6,6 +6,7 @@ export interface IPlanCardProps {
   isPlanFree: boolean;
   isLoading: boolean;
   isDisabled: boolean;
+  isRecomended: boolean;
   onCancel: (plan: IPlan) => void;
   onUpgrade: (plan: IPlan) => void;
 }
