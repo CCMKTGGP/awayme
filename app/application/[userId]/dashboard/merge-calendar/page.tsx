@@ -223,7 +223,7 @@ export default function MergeCalendar() {
             <p className="text-base leading-[24px] font-medium text-subHeading ">
               Select source and destination calendars. Events from your source
               calendar will be merged into the destination calendar. <br />{" "}
-              You'll be asked to confirm in the next step.
+              {"You'll"} be asked to confirm in the next step.
             </p>
             <div className="flex items-center gap-8 mt-4">
               <Dropdown

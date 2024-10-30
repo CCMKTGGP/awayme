@@ -26,7 +26,7 @@ export default function PaymentSuccess() {
             Thank you for your purchase!
           </h3>
           <p className="text-center text-base leading-[24px] text-subHeading ">
-            You've unlocked the power of peace of mind.
+            {"You've"} unlocked the power of peace of mind.
           </p>
         </div>
         <div className="flex justify-center">

@@ -147,8 +147,8 @@ export default function FillCalendar() {
       return (
         <div className="flex flex-col gap-4 mt-4">
           <div className="text-subHeading text-lg">
-            Click confirm if you're happy with this random fill. Or click start
-            over to get new events.
+            Click confirm if {"you're"} happy with this random fill. Or click
+            start over to get new events.
           </div>
           <div className="flex items-center gap-8">
             <Button
@@ -339,15 +339,15 @@ export default function FillCalendar() {
             </h3>
             {isPaidUser(user) ? (
               <p className="text-base leading-[24px] font-medium text-subHeading max-w-[60%]">
-                Select a calendar, a fill percentage, and a date range. Click
-                "create events" to fill. You'll be asked to confirm in the next
-                step.
+                Select a calendar, a fill percentage, and a date range. Click{" "}
+                <span className="font-bold text-heading">Create Events</span> to
+                fill. {"You'll"} be asked to confirm in the next step.
               </p>
             ) : (
               <p className="text-base leading-[24px] font-medium text-subHeading max-w-[60%]">
-                Select a calendar to fill. Because you're on the free version,
-                you're only able to fill 20%. You will be able to fill it again
-                in two weeks{" "}
+                Select a calendar to fill. Because {"you're"} on the free
+                version, {"you're"} only able to fill 20%. You will be able to
+                fill it again in two weeks{" "}
                 <span>
                   <Link
                     href={`/application/${user?._id}/billing`}

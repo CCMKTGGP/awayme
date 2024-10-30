@@ -43,14 +43,14 @@ export default function EmailNotVerified() {
           Email Verification Required
         </h1>
         <p className="text-base leading-[24px] text-subHeading text-center max-w-[60%] mx-auto">
-          We've sent you a confirmation email to the address provided. Please
-          click on the link in the email to verify your address.
+          {"We've"} sent you a confirmation email to the address provided.
+          Please click on the link in the email to verify your address.
         </p>
       </div>
       <hr className="w-[60%]" />
       <div className="flex flex-col gap-4">
         <p className="text-sm leading-[24px] text-subHeading text-center">
-          Didn't receive the email? Click on the Resend Email below.
+          {"Didn't"} receive the email? Click on the Resend Email below.
         </p>
         {loading ? (
           <p className="text-sm leading-[24px] text-subHeading text-center">
