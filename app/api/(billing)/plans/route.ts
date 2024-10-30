@@ -9,7 +9,7 @@ export const GET = async () => {
     await connect();
 
     // extract all the available plans
-    const plans = await Plan.find();
+    const plans = await Plan.find().sort({ createdAt: 1 });
 
     // send them to the frontend
     return new NextResponse(
@@ -23,12 +23,19 @@ export const GET = async () => {
 
 export const POST = async (request: Request) => {
   try {
-    const { planId, name, features, price, numberOfCalendarsAllowed } = await request.json();
+    const { planId, name, features, price, numberOfCalendarsAllowed } =
+      await request.json();
     // establish the connection with database
     await connect();
 
     // create the new plan object
-    const newPlan = new Plan({ planId, name, features, price, numberOfCalendarsAllowed });
+    const newPlan = new Plan({
+      planId,
+      name,
+      features,
+      price,
+      numberOfCalendarsAllowed,
+    });
     // save the info in the dabatabse
     await newPlan.save();
 
@@ -47,10 +54,7 @@ export const POST = async (request: Request) => {
 export const PUT = async (request: Request) => {
   try {
     // extract the fields from the request object
-    const {
-      planId,
-      numberOfCalendarsAllowed,
-    } = await request.json();
+    const { planId, numberOfCalendarsAllowed } = await request.json();
 
     // check if the planId exist and is valid
     if (!planId || !Types.ObjectId.isValid(planId)) {
@@ -76,7 +80,7 @@ export const PUT = async (request: Request) => {
     const updatedPlan = await Plan.findOneAndUpdate(
       { _id: plan._id },
       {
-        numberOfCalendarsAllowed
+        numberOfCalendarsAllowed,
       },
       {
         new: true,
