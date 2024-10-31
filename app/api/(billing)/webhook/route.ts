@@ -20,11 +20,6 @@ export const POST = async (req: NextRequest) => {
     return new NextResponse("Webhook Error: ", { status: 400 });
   }
 
-  // console.log("metadata", event?.data?.object);
-  console.log("event type", event.type);
-  const metadata = event.data.object as Stripe.Checkout.Session;
-  console.log("event metadata", metadata?.metadata);
-
   // Handle the event
   switch (event.type) {
     case "checkout.session.completed":
@@ -66,6 +61,7 @@ export const POST = async (req: NextRequest) => {
       break;
     case "customer.subscription.created":
     case "customer.subscription.updated":
+    case "customer.subscription.deleted":
       const subscription = event.data.object as Stripe.Subscription;
       const userIdFromMetadata = subscription.metadata?.userId;
       const plan_id = subscription.metadata?.planId;
@@ -74,11 +70,14 @@ export const POST = async (req: NextRequest) => {
       if (userIdFromMetadata) {
         await connect();
 
-        const updateFields = {
-          subscriptionId: subscription.id,
-          planType: plan_type,
-          plan: new Types.ObjectId(plan_id),
-        };
+        const updateFields =
+          event.type === "customer.subscription.deleted"
+            ? { subscriptionId: null, planType: null }
+            : {
+                subscriptionId: subscription.id,
+                planType: plan_type,
+                plan: new Types.ObjectId(plan_id),
+              };
 
         try {
           await User.findOneAndUpdate(
