@@ -20,6 +20,11 @@ export const POST = async (req: NextRequest) => {
     return new NextResponse("Webhook Error: ", { status: 400 });
   }
 
+  // console.log("metadata", event?.data?.object);
+  console.log("event type", event.type);
+  const metadata = event.data.object as Stripe.Checkout.Session;
+  console.log("event metadata", metadata?.metadata);
+
   // Handle the event
   switch (event.type) {
     case "checkout.session.completed":
