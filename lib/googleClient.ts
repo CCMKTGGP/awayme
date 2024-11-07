@@ -88,14 +88,8 @@ export async function getGoogleEvents({
   return events;
 }
 
-// Utility function to process promises sequentially
-async function processSequentially(promises: any) {
-  const results = [];
-  for (const promise of promises) {
-    results.push(await promise());
-  }
-  return results;
-}
+// Utility function to delay for a specified time (debounce)
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function storeGoogleEvents({
   events,
@@ -104,19 +98,22 @@ export async function storeGoogleEvents({
 }: IStoreEventTypes) {
   const calendar = googleClient({ accessToken, refreshToken });
 
-  const promises = events.map((event: any) => async () => {
+  // Sequentially process events with optional debounce delay
+  const errors = [];
+  for (let i = 0; i < events.length; i++) {
     try {
-      return await calendar.events.insert({
+      await calendar.events.insert({
         calendarId: "primary",
-        requestBody: event,
+        requestBody: events[i],
       });
     } catch (error) {
-      return { error, event }; // Return error with the event
+      errors.push({ error, event: events[i] }); // Capture the error with the event details
     }
-  });
 
-  const results = await processSequentially(promises);
-  const errors = results.filter((result) => result && result.error);
+    // Optional: delay between requests to avoid throttling issues
+    await delay(200);
+  }
 
+  // Return the result indicating if all events were stored successfully
   return { success: errors.length === 0, errors };
 }

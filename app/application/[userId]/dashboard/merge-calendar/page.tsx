@@ -249,7 +249,22 @@ export default function MergeCalendar() {
                   name: sourceCalendar?.name || "",
                 }}
               />
-              <img src="/arrow-right.svg" alt="Arrow Right svg" />
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.66634 15.9997L25.333 15.9997M25.333 15.9997L15.9997 6.66634M25.333 15.9997L15.9997 25.333"
+                  stroke="#171A1F"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+
               <Dropdown
                 isDisabled={fetchEvents}
                 id="destinationCalendar"

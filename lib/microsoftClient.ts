@@ -62,14 +62,8 @@ export async function getMicrosoftEvents({
   return events;
 }
 
-// Utility function to process promises sequentially
-async function processSequentially(promises: any) {
-  const results = [];
-  for (const promise of promises) {
-    results.push(await promise());
-  }
-  return results;
-}
+// Utility function to delay for a specified time (debounce)
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function storeOutlookEvents({
   events,
@@ -77,23 +71,25 @@ export async function storeOutlookEvents({
   refreshToken,
 }: IStoreEventTypes) {
   const url = "https://graph.microsoft.com/v1.0/me/events";
+  // Sequentially process events, debouncing with 200ms delay between each request
+  const errors = [];
 
-  const promises = events.map((event: any) => async () => {
+  for (let i = 0; i < events.length; i++) {
     try {
-      await axios.post(url, event, {
+      await axios.post(url, events[i], {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
       });
-      return null; // Return null for successful operations
     } catch (error) {
-      return { error, event }; // Return error with the event
+      errors.push({ error, event: events[i] }); // Capture the error with event details
     }
-  });
 
-  const results = await processSequentially(promises);
-  const errors = results.filter((result) => result);
+    // Optional: delay between requests to avoid throttling issues
+    await delay(200);
+  }
 
+  // Return the result indicating if all events were stored successfully
   return { success: errors.length === 0, errors };
 }

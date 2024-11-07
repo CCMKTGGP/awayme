@@ -10,7 +10,7 @@ export async function GET() {
 
   // Generate an authorization URL for the user to log in
   const authUrl = await cca.getAuthCodeUrl({
-    scopes: ["User.Read", "Calendars.Read"],
+    scopes: ["User.Read", "Calendars.ReadWrite"],
     redirectUri,
     authority,
   });

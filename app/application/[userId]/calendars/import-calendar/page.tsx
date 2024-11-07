@@ -113,7 +113,7 @@ export default function ImportCalendar() {
             ) {
               signIn("google", {
                 redirect: true,
-                callbackUrl: `/application/${user?._id}/calendars`,
+                callbackUrl: `/application/${user?._id}/dashboard`,
               });
               return;
             }

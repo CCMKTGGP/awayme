@@ -105,7 +105,7 @@ export async function GET(request: Request) {
     // fetch latest access token.
     const result: any = await cca.acquireTokenByRefreshToken({
       refreshToken: refreshToken,
-      scopes: ["User.Read", "Calendars.Read"],
+      scopes: ["User.Read", "Calendars.ReadWrite"],
     });
 
     // extract the access token from result

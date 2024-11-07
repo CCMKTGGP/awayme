@@ -113,7 +113,7 @@ export async function POST(request: Request) {
     // fetch latest access token.
     const response: any = await cca.acquireTokenByRefreshToken({
       refreshToken: refreshToken,
-      scopes: ["User.Read", "Calendars.Read"],
+      scopes: ["User.Read", "Calendars.ReadWrite"],
     });
 
     // extract the access token from result
@@ -157,7 +157,6 @@ export async function POST(request: Request) {
         );
       }
     }
-
     return new NextResponse(
       JSON.stringify({
         message: "Events stored successfully!",
@@ -170,11 +169,10 @@ export async function POST(request: Request) {
   } else {
     return new NextResponse(
       JSON.stringify({
-        message: "Error storing events.",
-        errors: result?.errors?.map(({ error, event }) => ({
-          message: error.message,
-          event,
-        })),
+        message: "Some events failed to store",
+        data: {
+          errors: result?.errors,
+        },
       }),
       { status: 500 }
     );

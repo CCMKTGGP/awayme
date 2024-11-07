@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
     // get the user details from the code
     const result = await cca.acquireTokenByCode({
       code,
-      scopes: ["User.Read", "Calendars.Read"],
+      scopes: ["User.Read", "Calendars.ReadWrite"],
       redirectUri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/callback`,
     });
 
@@ -117,7 +117,7 @@ export async function GET(req: NextRequest) {
 
     // redirect to the calendar dashboard with user id
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/application/${selectedUser?._id}/calendars`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/application/${selectedUser?._id}/dashboard`
     );
   } catch (error: any) {
     return new NextResponse(

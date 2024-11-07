@@ -11,13 +11,13 @@ export function getTwoMonthsLaterDate() {
   return moment().add(2, "months").toISOString();
 }
 
-export function getOneYearLaterDate() {
-  return moment().add(1, "year").toISOString();
+export function getFourMonthsLaterDate() {
+  return moment().add(4, "months").toISOString();
 }
 
 export function getMaxTime(user: IUser) {
   if (user?.plan?.planId?.toLowerCase() === PlanTypes.LIFETIME.toLowerCase()) {
-    return getOneYearLaterDate();
+    return getFourMonthsLaterDate();
   }
   if (user?.plan?.planId?.toLowerCase() === PlanTypes.ANNUAL.toLowerCase()) {
     return getTwoMonthsLaterDate();
