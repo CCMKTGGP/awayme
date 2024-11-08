@@ -180,8 +180,9 @@ function createRandomEvents({
     const eventEnd = eventStart.clone().add(randomDuration, "minutes");
 
     // Get a random event title and description if the user is paid
-    let summary = "Awayme Event";
-    let description = "This event is created by Awayme";
+    let summary = "AwayMe Event - AwayMe.cc";
+    let description =
+      "This event was created using the free version of AwayMe. Upgrade to AwayMe Pro to fill more of your calendar and get random event names and descriptions. Login to upgrade now at https://awayme.cc";
 
     if (isPaidUser) {
       const randomEvent = getRandomEvent();
