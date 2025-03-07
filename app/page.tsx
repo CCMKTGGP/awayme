@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
   return (
     <main className="flex flex-col">
-      <AuthHeader />
+      <AuthHeader hasLinks />
       <div className="h-[90vh] flex items-center justify-center gap-20">
         <div className="w-[500px] p-8 flex flex-col gap-8">
           <div className="flex flex-col gap-2">
