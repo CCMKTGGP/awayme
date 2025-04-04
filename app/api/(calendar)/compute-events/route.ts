@@ -169,14 +169,43 @@ function createRandomEvents({
 
     if (actualMaxDuration < minDuration) continue; // Skip this slot if it can't fit the minimum event
 
-    const randomDuration =
-      Math.floor(Math.random() * (actualMaxDuration - minDuration + 1)) +
-      minDuration;
-
-    const randomStartOffset = Math.floor(
-      Math.random() * (availableMinutes - randomDuration)
+    // Choose duration randomly from 15, 30, 45, 60 (only those that fit)
+    const possibleDurations = [60, 45, 30, 15].filter(
+      (dur) => dur <= actualMaxDuration
     );
-    const eventStart = slotStart.clone().add(randomStartOffset, "minutes");
+    if (possibleDurations.length === 0) continue;
+
+    const randomDuration =
+      possibleDurations[Math.floor(Math.random() * possibleDurations.length)];
+
+    // Generate candidate start times aligned with :00 or :30
+    const candidateStarts = [];
+    const candidateStart = slotStart.clone().startOf("minute");
+
+    if (candidateStart.minutes() % 30 !== 0) {
+      candidateStart
+        .minutes(candidateStart.minutes() < 30 ? 30 : 0)
+        .add(30, "minutes");
+    }
+
+    while (
+      candidateStart.clone().add(minDuration, "minutes").isSameOrBefore(slotEnd)
+    ) {
+      const candidateEnd = candidateStart
+        .clone()
+        .add(randomDuration, "minutes");
+
+      if (candidateEnd.isSameOrBefore(slotEnd)) {
+        candidateStarts.push(candidateStart.clone());
+      }
+
+      candidateStart.add(30, "minutes");
+    }
+
+    if (candidateStarts.length === 0) continue;
+
+    const eventStart =
+      candidateStarts[Math.floor(Math.random() * candidateStarts.length)];
     const eventEnd = eventStart.clone().add(randomDuration, "minutes");
 
     // Get a random event title and description if the user is paid
