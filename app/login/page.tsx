@@ -82,7 +82,7 @@ export default function Login() {
         console.error("Error while setting token in localStorage:", error);
       }
       setUser(data);
-      if(!data?.isVerified) {
+      if (!data?.isVerified) {
         return router.push(`/email-not-verified`);
       }
       return router.push(`/application/${data?._id}/dashboard`);
@@ -134,17 +134,25 @@ export default function Login() {
               error={error.passwordError}
               disabled={isLoading}
             />
+            <div className="flex justify-end mb-8">
+              <Link
+                href={"/forgot-password"}
+                className="font-bold text-primary hover:text-primaryHover underline px-1"
+              >
+                Forgot Password
+              </Link>
+            </div>
             {error.apiError && (
-            <ApiError
-              message={error.apiError}
-              setMessage={(value) =>
-                setError((error) => ({
-                  ...error,
-                  apiError: value,
-                }))
-              }
-            />
-          )}
+              <ApiError
+                message={error.apiError}
+                setMessage={(value) =>
+                  setError((error) => ({
+                    ...error,
+                    apiError: value,
+                  }))
+                }
+              />
+            )}
             <Button
               isDisabled={isLoading}
               isLoading={isLoading}

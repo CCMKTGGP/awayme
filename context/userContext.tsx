@@ -12,6 +12,8 @@ export interface IUser {
   verifyToken?: string;
   verifyTokenExpire?: Date;
   numberOfRetries?: number;
+  reset_password_token?: string;
+  reset_password_expire?: Date;
   plan: {
     _id: string;
     planId: string;

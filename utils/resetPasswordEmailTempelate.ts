@@ -1,4 +1,4 @@
-export const verificationEmailTemplate = (verificationLink: string) => {
+export const resetPasswordEmailTemplate = (verificationLink: string) => {
   return `
           <html>
     <head>
@@ -67,12 +67,11 @@ export const verificationEmailTemplate = (verificationLink: string) => {
     </head>
     <body>
       <div class="container">
-        <h1>Verify Your Email Address</h1>
+        <h1>Reset Your Password</h1>
         <p class="message">
-          Thank you for signing up! To complete your registration, please click
-          the button below to verify your email address.
+            You requested a password reset. Click the link below:
         </p>
-        <a href=${verificationLink} class="button">Verify Email</a>
+        <a href=${verificationLink} class="button">Reset Password</a>
         <p class="expire-time">This link will expire in 30 minutes.</p>
       </div>
     </body>

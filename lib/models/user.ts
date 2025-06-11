@@ -31,6 +31,12 @@ const UserSchema = new Schema(
     verifyTokenExpire: {
       type: Date,
     },
+    reset_password_token: {
+      type: String,
+    },
+    reset_password_expire: {
+      type: Date,
+    },
     nextCalendarUpdateDate: {
       type: Date,
     },
